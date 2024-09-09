@@ -31,12 +31,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16' # Versión compatible con Cypress y Lighthouse
+          node-version: '16' 
 
       - name: Install dependencies
         run: npm install
 
-      # Condicional para ejecutar Lighthouse
+    
       - name: Run Lighthouse audit
         if: ${{ inputs.run_lighthouse == 'true' }}
         run: |
@@ -47,20 +47,20 @@ jobs:
           # Muestra el contenido del reporte para confirmación
           cat ./cypress/reports/lighthouseReport.json
 
-      # Condicional para ejecutar el flujo de compra con Cypress
+    
       - name: Run Cypress tests
         if: ${{ inputs.run_purchase_flow == 'true' }}
         env:
-          CYPRESS_RECORD_KEY: 7fd66628-1f11-4099-bb96-8ccaaa5b301f # Incluye tu clave de Cypress Cloud
+          CYPRESS_RECORD_KEY: 7fd66628-1f11-4099-bb96-8ccaaa5b301f 
         run: |
           # Ejecuta las pruebas de Cypress y graba los resultados en el dashboard
           npx cypress run --record --spec "cypress/e2e/productPurchase.cy.js"
 
-      # Subida del reporte de Lighthouse como artefacto
+   
       - name: Upload Lighthouse report
         if: ${{ inputs.run_lighthouse == 'true' }} && always() # Asegura que se ejecute incluso si los tests fallan
         uses: actions/upload-artifact@v3
         with:
           name: lighthouse-report
           path: cypress/reports/lighthouseReport.json
-          retention-days: 7 # Ajusta el tiempo de retención de los reportes
+          retention-days: 7 

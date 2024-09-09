@@ -3,12 +3,12 @@ const { faker } = require('@faker-js/faker');
 
 class RegisterPage {
   constructor() {
-    // Selectores para el formulario de registro inicial
+   
     this.nameInput = '[data-qa="signup-name"]';
     this.emailInput = '[data-qa="signup-email"]';
     this.signupButton = '[data-qa="signup-button"]';
     
-    // Selectores para el formulario completo de detalles
+    
     this.genderRadio = '#id_gender2';
     this.nameDetailInput = '[data-qa="name"]';
     this.emailDetailInput = '[data-qa="email"]';
@@ -19,7 +19,7 @@ class RegisterPage {
     this.optinCheckbox = '#optin';
     this.firstNameInput = '[data-qa="first_name"]';
     this.lastNameInput = '[data-qa="last_name"]';
-    this.addressInput = '[data-qa="address"]'; // Campo de dirección
+    this.addressInput = '[data-qa="address"]'; 
     this.countrySelect = '[data-qa="country"]';
     this.stateInput = '[data-qa="state"]';
     this.cityInput = '[data-qa="city"]';
@@ -36,7 +36,7 @@ class RegisterPage {
     const randomName = faker.name.firstName() + ' ' + faker.name.lastName();
     const randomEmail = faker.internet.email().toLowerCase();
     const randomPassword = faker.internet.password(12);
-    const randomAddress = faker.address.streetAddress(); // Genera una dirección aleatoria
+    const randomAddress = faker.address.streetAddress(); 
     const randomZipcode = faker.address.zipCode('#####');
     const randomMobile = faker.phone.number('#########');
     const randomFirstName = faker.name.firstName();
@@ -53,26 +53,22 @@ class RegisterPage {
       lastName: randomLastName,
     };
 
-    // Guardar los datos generados en un archivo fixtures usando Cypress
     cy.writeFile('cypress/fixtures/data.json', userData);
 
     return userData;
   }
 
-  // Método para llenar el formulario de registro inicial
   registerNewUser() {
     const userData = this.generateRandomUserData();
 
-    // Verifica los valores antes de usarlos
     console.log('User Data:', userData);
 
-    // Asegúrate de que name y email no sean undefined
-    cy.get(this.nameInput).type(userData.name || 'Default Name'); // Llena el nombre
-    cy.get(this.emailInput).type(userData.email || 'default@example.com'); // Llena el correo electrónico
-    cy.get(this.signupButton).click(); // Clic en el botón de registro
+    cy.get(this.nameInput).type(userData.name || 'Default Name'); 
+    cy.get(this.emailInput).type(userData.email || 'default@example.com'); 
+    cy.get(this.signupButton).click(); 
   }
 
-  // Método para llenar el formulario de detalles después del registro
+
   fillDetailsForm() {
     cy.fixture('data.json').then((user) => {
       cy.get(this.genderRadio).click();
@@ -85,7 +81,7 @@ class RegisterPage {
       cy.get(this.optinCheckbox).check();
       cy.get(this.firstNameInput).type(user.firstName);
       cy.get(this.lastNameInput).type(user.lastName);
-      cy.get(this.addressInput).type(user.address); // Llenado del campo de dirección
+      cy.get(this.addressInput).type(user.address); 
       cy.get(this.countrySelect).select('United States');
       cy.get(this.stateInput).type('Santiago');
       cy.get(this.cityInput).type('Santiago');
