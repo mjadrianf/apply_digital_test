@@ -51,7 +51,7 @@ jobs:
       - name: Run Cypress tests
         if: ${{ inputs.run_purchase_flow == 'true' }}
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }} # Incluye tu clave de Cypress Cloud
+          CYPRESS_RECORD_KEY: 7fd66628-1f11-4099-bb96-8ccaaa5b301f # Incluye tu clave de Cypress Cloud
         run: |
           # Ejecuta las pruebas de Cypress y graba los resultados en el dashboard
           npx cypress run --record --spec "cypress/e2e/productPurchase.cy.js"
