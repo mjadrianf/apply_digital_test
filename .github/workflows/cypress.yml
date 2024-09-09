@@ -1,0 +1,51 @@
+name: Cypress Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Choose the test suite to run: main or lighthouse'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - lighthouse
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress Tests
+        env:
+          CYPRESS_PROJECT_ID: 8j5ed9
+        run: |
+          if [ "${{ github.event.inputs.test_suite }}" == "main" ]; then
+            echo "Running Main Test Suite"
+            npx cypress run --spec "cypress/e2e/productPurchase.cy.js" --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f
+          elif [ "${{ github.event.inputs.test_suite }}" == "lighthouse" ]; then
+            echo "Running Lighthouse Test Suite"
+            npx cypress run --spec "cypress/e2e/lighthouseTest.cy.js" --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f
+          else
+            echo "Invalid test suite option. Please choose 'main' or 'lighthouse'."
+            exit 1
+          fi
+
+      - name: Upload Cypress Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: cypress-results
+          path: cypress/videos/
