@@ -59,7 +59,7 @@ jobs:
       # Subida del reporte de Lighthouse como artefacto
       - name: Upload Lighthouse report
         if: ${{ inputs.run_lighthouse == 'true' }} && always() # Asegura que se ejecute incluso si los tests fallan
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: lighthouse-report
           path: cypress/reports/lighthouseReport.json
