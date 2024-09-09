@@ -5,15 +5,17 @@
   "main": "index.js",
   "scripts": {
     "cy:open": "cypress open",
-    "cy:dashboard": "npx cypress run --spec 'cypress/e2e/consultaTablaEmpresa.cy.js' --browser chrome --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f",
-    "cy:lighthouse": "npx cypress run --spec 'cypress/e2e/lighthouseTest.cy.js' --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f"
+    "cy:dashboard": "npx cypress run --spec 'cypress/e2e/productPurchase.cy.js' --browser chrome --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f",
+    "cy:lighthouse": "npx cypress run --spec 'cypress/e2e/lighthouseTest.cy.js' --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f",
+    "lighthouse": "npx lighthouse https://automationexercise.com --output=json --output-path=./lighthouseReport.json"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^6.0.2",
+    "@faker-js/faker": "^9.0.0",
     "cypress": "^13.14.2",
-    "cypress-audit": "^1.1.0",
+    "cypress-audit": "^1.0.0",
     "lighthouse": "^12.2.1"
   }
 }

@@ -1,16 +1,18 @@
 // productPage.js
 class ProductPage {
     selectThirdProduct() {
-      cy.get('.product-grid .col-sm-4').eq(2).click(); // Selecciona el tercer producto
+      cy.get('div:nth-of-type(5) > .product-image-wrapper > .choose > .nav.nav-justified.nav-pills  a').click(); // Selecciona el tercer producto
     }
   
     enterRandomQuantity() {
+    
       const randomQuantity = Math.floor(Math.random() * 20) + 1;
-      cy.get('#quantity').clear().type(randomQuantity.toString());
+      cy.get('input#quantity').clear().type(randomQuantity.toString());
     }
   
     addToCart() {
-      cy.get('.add-to-cart').click();
+      cy.get('.btn.btn-default.cart').click();
+      cy.get('.btn.btn-block.btn-success.close-modal').click();
     }
   }
   

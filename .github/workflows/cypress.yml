@@ -1,51 +1,66 @@
-name: Cypress Tests
+name: Cypress Tests with Lighthouse
 
 on:
   workflow_dispatch:
     inputs:
-      test_suite:
-        description: 'Choose the test suite to run: main or lighthouse'
-        required: true
-        default: 'main'
+      run_lighthouse:
+        description: 'Run Lighthouse audit'
+        required: false
+        default: 'false'
         type: choice
         options:
-          - main
-          - lighthouse
+          - 'true'
+          - 'false'
+      run_purchase_flow:
+        description: 'Run Purchase Flow with Cypress'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '16' # Versión compatible con Cypress y Lighthouse
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Cypress Tests
-        env:
-          CYPRESS_PROJECT_ID: 8j5ed9
+      # Condicional para ejecutar Lighthouse
+      - name: Run Lighthouse audit
+        if: ${{ inputs.run_lighthouse == 'true' }}
         run: |
-          if [ "${{ github.event.inputs.test_suite }}" == "main" ]; then
-            echo "Running Main Test Suite"
-            npx cypress run --spec "cypress/e2e/productPurchase.cy.js" --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f
-          elif [ "${{ github.event.inputs.test_suite }}" == "lighthouse" ]; then
-            echo "Running Lighthouse Test Suite"
-            npx cypress run --spec "cypress/e2e/lighthouseTest.cy.js" --record --key 7fd66628-1f11-4099-bb96-8ccaaa5b301f
-          else
-            echo "Invalid test suite option. Please choose 'main' or 'lighthouse'."
-            exit 1
-          fi
+          # Ejecuta Lighthouse y guarda los resultados en JSON
+          mkdir -p cypress/reports
+          npx lighthouse https://automationexercise.com --output=json --output-path=./cypress/reports/lighthouseReport.json
+          
+          # Muestra el contenido del reporte para confirmación
+          cat ./cypress/reports/lighthouseReport.json
 
-      - name: Upload Cypress Artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
+      # Condicional para ejecutar el flujo de compra con Cypress
+      - name: Run Cypress tests
+        if: ${{ inputs.run_purchase_flow == 'true' }}
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }} # Incluye tu clave de Cypress Cloud
+        run: |
+          # Ejecuta las pruebas de Cypress y graba los resultados en el dashboard
+          npx cypress run --record --spec "cypress/e2e/productPurchase.cy.js"
+
+      # Subida del reporte de Lighthouse como artefacto
+      - name: Upload Lighthouse report
+        if: ${{ inputs.run_lighthouse == 'true' }} && always() # Asegura que se ejecute incluso si los tests fallan
+        uses: actions/upload-artifact@v2
         with:
-          name: cypress-results
-          path: cypress/videos/
+          name: lighthouse-report
+          path: cypress/reports/lighthouseReport.json
+          retention-days: 7 # Ajusta el tiempo de retención de los reportes
